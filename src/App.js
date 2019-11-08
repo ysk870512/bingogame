@@ -1,26 +1,50 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Board from './components/Board';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as playGame from './modules/play';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+    render() {
+        const { initial, playGame } = this.props;
+        const { status } = initial;
+        //console.log("initial", initial);
+        return (
+            <div className="App">
+                <div>
+                    {!status ? (
+                        <button
+                            onClick={() => {
+                                playGame.gameStart();
+                            }}
+                        >
+                            게임 시작
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => {
+                                playGame.gameReset();
+                            }}
+                        >
+                            게임 재시작
+                        </button>
+                    )}
+                </div>
+                <div className="wrap-board">
+                    <Board player={1} />
+                    <Board player={2} />
+                </div>
+            </div>
+        );
+    }
 }
 
-export default App;
+export default connect(
+    state => ({
+        initial: state.play,
+    }),
+    dispatch => ({
+        playGame: bindActionCreators(playGame, dispatch),
+    }),
+)(App);
